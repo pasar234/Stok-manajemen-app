@@ -2,7 +2,7 @@
   "name": "Stok Pintar Manajemen",
   "short_name": "StokPintar",
   "description": "Aplikasi manajemen stok barang operasional toko",
-  "start_url": "./index.html",
+  "start_url": "/Steaknew-app/index.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#2563eb",
@@ -11,7 +11,7 @@
       "src": "https://cdn-icons-png.flaticon.com/512/2633/2633807.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     }
   ]
 }
