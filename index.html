@@ -6,33 +6,34 @@
     <title>Stok Pintar Manajemen</title>
     <link rel="manifest" href="manifest.json">
     <style>
-        body { font-family: sans-serif; padding: 20px; background: #f4f7f6; }
-        .card { background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        .nav-tabs { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; }
-        .tab { padding: 10px 20px; background: #ddd; border-radius: 5px; cursor: pointer; white-space: nowrap; }
+        body { font-family: sans-serif; padding: 15px; background: #f0f2f5; }
+        .tabs { display: flex; gap: 5px; margin-bottom: 15px; overflow-x: auto; }
+        .tab { padding: 8px 15px; background: #ccc; border-radius: 5px; cursor: pointer; border: none; font-weight: bold; }
         .tab.active { background: #2563eb; color: white; }
-        input, select, button { width: 100%; padding: 10px; margin: 5px 0; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
-        .btn-save { background: #2563eb; color: white; font-weight: bold; cursor: pointer; }
-        .btn-backup { background: #1f2937; color: white; margin-top: 10px; }
-        .btn-restore { background: #f97316; color: white; }
+        .card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 15px; }
+        input, select, button { width: 100%; padding: 12px; margin: 5px 0; border-radius: 5px; border: 1px solid #ddd; box-sizing: border-box; }
+        .btn-blue { background: #2563eb; color: white; border: none; font-weight: bold; }
+        .list-item { border-bottom: 1px solid #eee; padding: 10px 0; display: flex; justify-content: space-between; align-items: center; }
+        .stok-controls { display: flex; align-items: center; gap: 10px; }
+        .btn-stok { width: 35px; height: 35px; border-radius: 50%; border: none; color: white; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <h2 style="color: #2563eb; text-align: center;">Manajemen Produk</h2>
 
-    <div class="nav-tabs">
-        <div class="tab active" onclick="filterKat('NARITA')">NARITA</div>
-        <div class="tab" onclick="filterKat('VR')">VR</div>
-        <div class="tab" onclick="filterKat('KUDUS')">KUDUS</div>
-        <div class="tab" onclick="filterKat('LAIN')">LAIN LAIN</div>
+    <div class="tabs">
+        <button class="tab active" id="btn-NARITA" onclick="filterData('NARITA')">NARITA</button>
+        <button class="tab" id="btn-VR" onclick="filterData('VR')">VR</button>
+        <button class="tab" id="btn-KUDUS" onclick="filterData('KUDUS')">KUDUS</button>
+        <button class="tab" id="btn-LAIN" onclick="filterData('LAIN')">LAIN LAIN</button>
     </div>
 
     <div class="card">
-        <h3>TAMBAH PRODUK</h3>
+        <strong>TAMBAH PRODUK</strong>
         <input type="text" id="kode" placeholder="Kode Produk">
         <input type="text" id="nama" placeholder="Nama Produk">
-        <div style="display: flex; gap: 10px;">
+        <div style="display: flex; gap: 5px;">
             <input type="number" id="hargaBeli" placeholder="Dasar">
             <input type="number" id="hargaJual" placeholder="Harga Jual">
         </div>
@@ -42,53 +43,95 @@
             <option value="KUDUS">KUDUS</option>
             <option value="LAIN">LAIN LAIN</option>
         </select>
-        <button class="btn-save" onclick="simpanProduk()">SIMPAN PRODUK</button>
+        <button class="btn-blue" onclick="simpan()">SIMPAN PRODUK</button>
     </div>
 
     <div class="card">
-        <h3>PENCADANGAN DATA</h3>
-        <button class="btn-backup" onclick="exportData()">DOWNLOAD BACKUP (.json)</button>
-        <input type="file" id="importFile" style="display:none" onchange="importData(event)">
-        <button class="btn-restore" onclick="document.getElementById('importFile').click()">PILIH FILE BACKUP</button>
+        <input type="text" id="cari" placeholder="🔍 Cari nama atau kode produk..." onkeyup="renderDaftar()">
+    </div>
+
+    <div class="card" id="daftarProduk">
+        </div>
+
+    <div class="card" style="text-align: center;">
+        <p style="font-size: 12px; color: gray;">PENCADANGAN DATA</p>
+        <button onclick="exportData()" style="background: #333; color: white;">DOWNLOAD BACKUP</button>
+        <input type="file" id="f" style="display:none" onchange="importData(event)">
+        <button onclick="document.getElementById('f').click()" style="background: #f97316; color: white;">PILIH FILE BACKUP</button>
     </div>
 
     <script>
-        // Logika sederhana untuk simpan ke LocalStorage
-        function simpanProduk() {
-            const data = {
+        let kategoriAktif = 'NARITA';
+        let database = JSON.parse(localStorage.getItem('db_stok')) || [];
+
+        function simpan() {
+            const p = {
                 kode: document.getElementById('kode').value,
                 nama: document.getElementById('nama').value,
                 beli: document.getElementById('hargaBeli').value,
                 jual: document.getElementById('hargaJual').value,
-                kat: document.getElementById('kategori').value
+                kat: document.getElementById('kategori').value,
+                stok: 0
             };
-            let list = JSON.parse(localStorage.getItem('stok_data')) || [];
-            list.push(data);
-            localStorage.setItem('stok_data', JSON.stringify(list));
-            alert('Produk Berhasil Disimpan!');
+            if(!p.nama) return alert('Nama harus diisi');
+            database.push(p);
+            localStorage.setItem('db_stok', JSON.stringify(database));
+            alert('Tersimpan!');
+            renderDaftar();
         }
 
-        // Fitur Backup
+        function filterData(kat) {
+            kategoriAktif = kat;
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById('btn-' + (kat === 'LAIN LAIN' ? 'LAIN' : kat)).classList.add('active');
+            renderDaftar();
+        }
+
+        function updateStok(index, nilai) {
+            database[index].stok = Math.max(0, parseInt(database[index].stok) + nilai);
+            localStorage.setItem('db_stok', JSON.stringify(database));
+            renderDaftar();
+        }
+
+        function renderDaftar() {
+            const cari = document.getElementById('cari').value.toLowerCase();
+            const container = document.getElementById('daftarProduk');
+            container.innerHTML = '';
+            
+            database.forEach((p, index) => {
+                if(p.kat === kategoriAktif && (p.nama.toLowerCase().includes(cari) || p.kode.toLowerCase().includes(cari))) {
+                    container.innerHTML += `
+                        <div class="list-item">
+                            <div>
+                                <strong>${p.nama}</strong><br>
+                                <small>Beli: ${p.beli} | Jual: ${p.jual}</small>
+                            </div>
+                            <div class="stok-controls">
+                                <button class="btn-stok" style="background:red" onclick="updateStok(${index}, -1)">-</button>
+                                <strong>${p.stok}</strong>
+                                <button class="btn-stok" style="background:green" onclick="updateStok(${index}, 1)">+</button>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+        }
+
         function exportData() {
-            const data = localStorage.getItem('stok_data');
-            const blob = new Blob([data], {type: 'application/json'});
-            const url = URL.createObjectURL(blob);
+            const blob = new Blob([JSON.stringify(database)], {type: 'application/json'});
             const a = document.createElement('a');
-            a.href = url;
-            a.download = 'backup_stok.json';
+            a.href = URL.createObjectURL(blob);
+            a.download = 'backup.json';
             a.click();
         }
 
-        // Fitur Restore
-        function importData(event) {
-            const reader = new FileReader();
-            reader.onload = function() {
-                localStorage.setItem('stok_data', reader.result);
-                alert('Data Berhasil Dipulihkan!');
-                location.reload();
-            };
-            reader.readAsText(event.target.files[0]);
+        function importData(e) {
+            const r = new FileReader();
+            r.onload = () => { database = JSON.parse(r.result); localStorage.setItem('db_stok', r.result); renderDaftar(); };
+            r.readAsText(e.target.files[0]);
         }
+
+        renderDaftar(); // Jalankan saat startup
     </script>
 </body>
 </html>
