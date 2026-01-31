@@ -5,43 +5,71 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stok Pintar Manajemen</title>
     <style>
-        body { font-family: sans-serif; margin: 0; background: #f0f2f5; }
+        body { font-family: sans-serif; margin: 0; background: #f0f2f5; color: #333; }
         
-        /* Navigasi Atas Sesuai Permintaan */
-        .nav-top { background: white; display: flex; justify-content: space-around; border-bottom: 2px solid #2563eb; padding: 10px 0; position: sticky; top: 0; z-index: 1000; overflow-x: auto; }
-        .nav-item { border: none; background: none; font-size: 11px; font-weight: bold; color: #666; cursor: pointer; display: flex; flex-direction: column; align-items: center; min-width: 70px; }
-        .nav-item.active { color: #2563eb; border-bottom: 3px solid #2563eb; }
+        /* Navigasi Atas Sesuai Sketsa */
+        .nav-top { 
+            background: white; 
+            display: flex; 
+            justify-content: space-around; 
+            border-bottom: 2px solid #2563eb; 
+            padding: 10px 0; 
+            position: sticky; 
+            top: 0; 
+            z-index: 1000; 
+        }
+        .nav-item { 
+            border: none; 
+            background: none; 
+            font-size: 11px; 
+            font-weight: bold; 
+            color: #666; 
+            cursor: pointer; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+        }
+        .nav-item.active { color: #2563eb; }
 
         .container { padding: 15px; }
         .page { display: none; }
         .page.active { display: block; }
         
-        /* Card & Input */
         .card { background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 15px; }
-        .harga-container { display: flex; gap: 10px; }
         input, select, button { width: 100%; padding: 12px; margin: 5px 0; border-radius: 8px; border: 1px solid #ddd; box-sizing: border-box; font-size: 16px; }
-        .btn-blue { background: #2563eb; color: white; border: none; font-weight: bold; }
-
-        /* Style Daftar Produk Sesuai Sketsa 57983 */
-        .list-item { border-bottom: 1px solid #eee; padding: 15px 0; }
-        .item-row { display: flex; justify-content: space-between; align-items: center; }
         
-        /* Teks JUAL Besar & Tebal */
-        .text-jual { font-size: 24px; font-weight: 900; color: #1e293b; margin: 5px 0; display: block; }
+        /* Tombol Simpan Biru */
+        .btn-blue { background: #2563eb; color: white; border: none; font-weight: bold; cursor: pointer; }
         
-        .stok-box { border: 1px solid #333; padding: 5px; border-radius: 5px; display: flex; align-items: center; gap: 8px; background: #fff; }
-        .btn-qty { width: 30px; height: 30px; border: 1px solid #333; background: #fff; font-weight: bold; cursor: pointer; border-radius: 3px; }
-        .btn-hapus { background: none; border: none; color: #ef4444; font-size: 12px; font-weight: bold; cursor: pointer; padding: 0; display: flex; align-items: center; gap: 4px; }
+        /* Tampilan Produk Sesuai Sketsa 57983 */
+        .product-header { display: flex; justify-content: space-between; align-items: flex-start; }
+        .price-tag { 
+            font-size: 26px; /* Font Jual Besar */
+            font-weight: 900; /* Font Jual Tebal */
+            color: #1e293b;
+            margin: 5px 0;
+        }
+        .stok-control { 
+            border: 1.5px solid #333; 
+            padding: 5px; 
+            border-radius: 8px; 
+            text-align: center; 
+            min-width: 80px;
+        }
+        .btn-qty { 
+            width: 30px; height: 30px; border: 1px solid #333; background: white; font-weight: bold; cursor: pointer; border-radius: 4px; 
+        }
+        .btn-hapus { background: none; border: none; color: #ef4444; font-size: 12px; font-weight: bold; cursor: pointer; padding: 0; margin-top: 10px; }
     </style>
 </head>
 <body>
 
 <div class="nav-top">
     <button class="nav-item active" id="nav-home" onclick="showPage('home')">➕<br>TAMBAH</button>
-    <button class="nav-item" id="nav-narita" onclick="showPage('NARITA')">📦<br>NARITA</button>
-    <button class="nav-item" id="nav-vr" onclick="showPage('VR')">📦<br>VR</button>
-    <button class="nav-item" id="nav-kudus" onclick="showPage('KUDUS')">📦<br>KUDUS</button>
-    <button class="nav-item" id="nav-lain" onclick="showPage('LAIN')">📦<br>LAIN</button>
+    <button class="nav-item" id="nav-NARITA" onclick="showPage('NARITA')">📦<br>NARITA</button>
+    <button class="nav-item" id="nav-VR" onclick="showPage('VR')">📦<br>VR</button>
+    <button class="nav-item" id="nav-KUDUS" onclick="showPage('KUDUS')">📦<br>KUDUS</button>
+    <button class="nav-item" id="nav-LAIN" onclick="showPage('LAIN')">📦<br>LAIN</button>
 </div>
 
 <div class="container">
@@ -50,7 +78,7 @@
             <strong>TAMBAH PRODUK BARU</strong>
             <input type="text" id="kode" placeholder="Kode Produk">
             <input type="text" id="nama" placeholder="Nama Produk">
-            <div class="harga-container">
+            <div style="display: flex; gap: 10px;">
                 <input type="number" id="beli" style="flex:1" placeholder="Dasar">
                 <input type="number" id="jual" style="flex:2" placeholder="Harga Jual">
             </div>
@@ -60,81 +88,78 @@
                 <option value="KUDUS">KUDUS</option>
                 <option value="LAIN">LAIN LAIN</option>
             </select>
-            <button class="btn-blue" onclick="simpan()">SIMPAN PRODUK</button>
-        </div>
-
-        <div class="card" style="text-align: center;">
-            <p style="font-size: 12px; color: gray;">CADANGAN DATA</p>
-            <button onclick="exportData()" style="background: #333; color: white;">DOWNLOAD BACKUP</button>
-            <input type="file" id="f" style="display:none" onchange="importData(event)">
-            <button onclick="document.getElementById('f').click()" style="background: #f97316; color: white; margin-top: 8px;">PILIH FILE BACKUP</button>
+            <button class="btn-blue" onclick="simpanData()">SIMPAN PRODUK</button>
         </div>
     </div>
 
     <div id="page-list" class="page">
         <div class="card">
-            <input type="text" id="cari" placeholder="🔍 Cari nama atau kode..." onkeyup="renderList()">
+            <input type="text" id="cari" placeholder="🔍 Cari nama atau kode..." onkeyup="renderData()">
         </div>
-        <div id="product-container"></div>
+        <div id="list-container"></div>
     </div>
 </div>
 
 <script>
-    let db = JSON.parse(localStorage.getItem('db_stok')) || [];
-    let currentKat = '';
+    let database = JSON.parse(localStorage.getItem('stok_app_db')) || [];
+    let katSekarang = '';
 
-    function showPage(page) {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        if(page === 'home') {
+    function showPage(p) {
+        document.querySelectorAll('.page').forEach(pg => pg.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(nv => nv.classList.remove('active'));
+        
+        if(p === 'home') {
             document.getElementById('page-home').classList.add('active');
             document.getElementById('nav-home').classList.add('active');
         } else {
-            currentKat = page;
+            katSekarang = p;
             document.getElementById('page-list').classList.add('active');
-            document.getElementById('nav-' + (page === 'LAIN' ? 'lain' : page.toLowerCase())).classList.add('active');
-            renderList();
+            document.getElementById('nav-' + p).classList.add('active');
+            renderData();
         }
     }
 
-    function simpan() {
-        const item = {
-            id: Date.now(),
-            kode: document.getElementById('kode').value,
-            nama: document.getElementById('nama').value,
-            beli: document.getElementById('beli').value,
-            jual: document.getElementById('jual').value,
-            kat: document.getElementById('kategori').value,
-            stok: 0
-        };
-        if(!item.nama) return alert("Nama wajib diisi!");
-        db.push(item);
-        localStorage.setItem('db_stok', JSON.stringify(db));
-        alert("Tersimpan!");
-        document.getElementById('nama').value = ''; document.getElementById('kode').value = '';
+    function simpanData() {
+        const n = document.getElementById('nama').value;
+        const k = document.getElementById('kode').value;
+        const b = document.getElementById('beli').value;
+        const j = document.getElementById('jual').value;
+        const kat = document.getElementById('kategori').value;
+
+        if(!n || !j) return alert("Nama dan Harga Jual wajib diisi!");
+
+        const produkBaru = { id: Date.now(), nama: n, kode: k, beli: b, jual: j, kategori: kat, stok: 0 };
+        database.push(produkBaru);
+        localStorage.setItem('stok_app_db', JSON.stringify(database));
+        
+        alert("Produk berhasil disimpan!");
+        document.getElementById('nama').value = '';
+        document.getElementById('kode').value = '';
+        document.getElementById('beli').value = '';
+        document.getElementById('jual').value = '';
     }
 
-    function renderList() {
-        const q = document.getElementById('cari').value.toLowerCase();
-        const container = document.getElementById('product-container');
+    function renderData() {
+        const container = document.getElementById('list-container');
+        const search = document.getElementById('cari').value.toLowerCase();
         container.innerHTML = '';
-        
-        db.forEach((p) => {
-            if(p.kat === currentKat && (p.nama.toLowerCase().includes(q) || p.kode.toLowerCase().includes(q))) {
+
+        database.forEach((item, index) => {
+            if(item.kategori === katSekarang && (item.nama.toLowerCase().includes(search) || item.kode.toLowerCase().includes(search))) {
                 container.innerHTML += `
                     <div class="card">
-                        <div class="item-row">
+                        <div class="product-header">
                             <div style="flex:1">
-                                <strong style="font-size:20px">${p.nama}</strong><br>
-                                <small>ID: ${p.kode} | Beli: ${p.beli}</small>
-                                <span class="text-jual">JUAL: ${p.jual}</span>
-                                <button class="btn-hapus" onclick="hapusProduk(${p.id})">🗑️ HAPUS PRODUK</button>
+                                <strong style="font-size:18px">${item.nama}</strong><br>
+                                <small>ID: ${item.kode} | Beli: ${item.beli}</small>
+                                <div class="price-tag">JUAL: ${item.jual}</div>
+                                <button class="btn-hapus" onclick="hapus(${item.id})">🗑️ HAPUS PRODUK</button>
                             </div>
-                            <div class="stok-box">
-                                <small>STOK</small>
-                                <button class="btn-qty" onclick="setStok(${p.id},-1)">-</button>
-                                <strong>${p.stok}</strong>
-                                <button class="btn-qty" onclick="setStok(${p.id},1)">+</button>
+                            <div class="stok-control">
+                                <small>STOK</small><br>
+                                <button class="btn-qty" onclick="ubahStok(${index}, -1)">-</button>
+                                <strong style="margin: 0 5px">${item.stok}</strong>
+                                <button class="btn-qty" onclick="ubahStok(${index}, 1)">+</button>
                             </div>
                         </div>
                     </div>`;
@@ -142,23 +167,19 @@
         });
     }
 
-    function setStok(id, n) {
-        const idx = db.findIndex(p => p.id === id);
-        db[idx].stok = Math.max(0, parseInt(db[idx].stok) + n);
-        localStorage.setItem('db_stok', JSON.stringify(db));
-        renderList();
+    function ubahStok(idx, val) {
+        database[idx].stok = Math.max(0, parseInt(database[idx].stok) + val);
+        localStorage.setItem('stok_app_db', JSON.stringify(database));
+        renderData();
     }
 
-    function hapusProduk(id) {
-        if(confirm("Hapus produk?")) {
-            db = db.filter(p => p.id !== id);
-            localStorage.setItem('db_stok', JSON.stringify(db));
-            renderList();
+    function hapus(id) {
+        if(confirm("Hapus produk ini?")) {
+            database = database.filter(x => x.id !== id);
+            localStorage.setItem('stok_app_db', JSON.stringify(database));
+            renderData();
         }
     }
-
-    function exportData() {
-        const blob = new Blob([JSON.stringify(db)], {type: 'application/json'});
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = 'backup.json';
+</script>
+</body>
+    </html>
