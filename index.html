@@ -28,6 +28,7 @@
             background-color: white;
             min-height: 100vh;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            position: relative;
         }
         
         /* Header */
@@ -68,11 +69,14 @@
             padding: 5px 10px;
             border-radius: 8px;
             transition: all 0.3s ease;
+            cursor: pointer;
+            min-width: 60px;
         }
         
         .category.active {
             color: #4a6fa5;
             background-color: rgba(74, 111, 165, 0.1);
+            font-weight: 600;
         }
         
         .category-icon {
@@ -119,7 +123,8 @@
         
         /* Products List */
         .products-list {
-            padding: 0 16px 20px;
+            padding: 0 16px 80px;
+            min-height: 300px;
         }
         
         .product-item {
@@ -185,8 +190,8 @@
             font-size: 16px;
         }
         
-        /* Add Button */
-        .add-btn {
+        /* Add Product Button */
+        .add-product-btn {
             position: fixed;
             bottom: 25px;
             right: 25px;
@@ -341,6 +346,107 @@
             font-weight: 600;
             color: #d32f2f;
         }
+        
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: #888;
+        }
+        
+        .empty-state i {
+            font-size: 60px;
+            margin-bottom: 20px;
+            color: #ccc;
+        }
+        
+        .empty-state h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        
+        .empty-state p {
+            font-size: 14px;
+        }
+        
+        /* Category Page Header */
+        .category-header {
+            padding: 15px 16px;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .category-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #4a6fa5;
+        }
+        
+        .back-button {
+            background: none;
+            border: none;
+            color: #4a6fa5;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        /* Product Image */
+        .product-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            background-color: #f0f4f8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: #4a6fa5;
+            font-size: 20px;
+        }
+        
+        .product-row {
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+        
+        /* Modal for adding product */
+        .add-product-modal .modal-content {
+            max-width: 450px;
+        }
+        
+        .category-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .category-option {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .category-option:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .category-option.selected {
+            background-color: rgba(74, 111, 165, 0.1);
+            border-color: #4a6fa5;
+            color: #4a6fa5;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
@@ -351,102 +457,47 @@
             <p class="app-subtitle">Manajemen Stok Produk</p>
         </header>
         
-        <!-- Categories Menu -->
+        <!-- Menu Categories -->
         <div class="categories">
-            <div class="category active">
+            <div class="category active" data-category="tambah">
                 <div class="category-icon">T+</div>
                 <span class="category-name">TAMBAH</span>
             </div>
-            <div class="category">
+            <div class="category" data-category="narita">
                 <div class="category-icon">N</div>
                 <span class="category-name">NARITA</span>
             </div>
-            <div class="category">
+            <div class="category" data-category="vr">
                 <div class="category-icon">V</div>
                 <span class="category-name">VR</span>
             </div>
-            <div class="category">
+            <div class="category" data-category="kudus">
                 <div class="category-icon">K</div>
                 <span class="category-name">KUDUS</span>
             </div>
-            <div class="category">
+            <div class="category" data-category="lain">
                 <div class="category-icon">L</div>
                 <span class="category-name">LAIN</span>
             </div>
         </div>
         
-        <!-- Search Bar -->
-        <div class="search-container">
-            <div class="search-box">
-                <i class="fas fa-search search-icon"></i>
-                <input type="text" class="search-input" placeholder="Cari nama atau produk...">
+        <!-- Main Content Area (changes based on category) -->
+        <div id="content-area">
+            <!-- Default Home Content -->
+            <div class="search-container">
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="search-input" id="searchInput" placeholder="Cari nama atau produk...">
+                </div>
+            </div>
+            
+            <div class="products-list" id="productsList">
+                <!-- Products will be loaded here based on category -->
             </div>
         </div>
         
-        <!-- Products List -->
-        <div class="products-list">
-            <!-- Product A -->
-            <div class="product-item">
-                <div class="product-info">
-                    <div class="product-name">Nama Produk A</div>
-                    <div class="product-price" onclick="openPriceModal('Nama Produk A', '25000')">
-                        Rp <span class="current-price">25.000</span>
-                    </div>
-                </div>
-                <div class="stock-control">
-                    <button class="stock-btn minus" onclick="updateStock('productA', -1)">-</button>
-                    <div class="stock-count" id="stockProductA">0</div>
-                    <button class="stock-btn plus" onclick="updateStock('productA', 1)">+</button>
-                </div>
-            </div>
-            
-            <!-- Product B -->
-            <div class="product-item">
-                <div class="product-info">
-                    <div class="product-name">Nama Produk B</div>
-                    <div class="product-price" onclick="openPriceModal('Nama Produk B', '32500')">
-                        Rp <span class="current-price">32.500</span>
-                    </div>
-                </div>
-                <div class="stock-control">
-                    <button class="stock-btn minus" onclick="updateStock('productB', -1)">-</button>
-                    <div class="stock-count" id="stockProductB">5</div>
-                    <button class="stock-btn plus" onclick="updateStock('productB', 1)">+</button>
-                </div>
-            </div>
-            
-            <!-- Additional Products -->
-            <div class="product-item">
-                <div class="product-info">
-                    <div class="product-name">Nama Produk C</div>
-                    <div class="product-price" onclick="openPriceModal('Nama Produk C', '18000')">
-                        Rp <span class="current-price">18.000</span>
-                    </div>
-                </div>
-                <div class="stock-control">
-                    <button class="stock-btn minus" onclick="updateStock('productC', -1)">-</button>
-                    <div class="stock-count" id="stockProductC">12</div>
-                    <button class="stock-btn plus" onclick="updateStock('productC', 1)">+</button>
-                </div>
-            </div>
-            
-            <div class="product-item">
-                <div class="product-info">
-                    <div class="product-name">Nama Produk D</div>
-                    <div class="product-price" onclick="openPriceModal('Nama Produk D', '42500')">
-                        Rp <span class="current-price">42.500</span>
-                    </div>
-                </div>
-                <div class="stock-control">
-                    <button class="stock-btn minus" onclick="updateStock('productD', -1)">-</button>
-                    <div class="stock-count" id="stockProductD">3</div>
-                    <button class="stock-btn plus" onclick="updateStock('productD', 1)">+</button>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Add Button -->
-        <button class="add-btn" onclick="alert('Fitur tambah produk akan dikembangkan lebih lanjut')">
+        <!-- Add Product Button (Floating Button) -->
+        <button class="add-product-btn" id="addProductBtn">
             <i class="fas fa-plus"></i>
         </button>
     </div>
@@ -480,121 +531,108 @@
             </div>
         </div>
     </div>
+    
+    <!-- Modal for Adding Product -->
+    <div class="modal-overlay add-product-modal" id="addProductModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Tambah Produk Baru</h2>
+                <button class="close-modal" onclick="closeAddProductModal()">&times;</button>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Nama Produk</label>
+                <input type="text" class="form-input" id="newProductName" placeholder="Masukkan nama produk">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Kategori</label>
+                <div class="category-options">
+                    <div class="category-option" data-category="tambah">TAMBAH</div>
+                    <div class="category-option" data-category="narita">NARITA</div>
+                    <div class="category-option" data-category="vr">VR</div>
+                    <div class="category-option" data-category="kudus">KUDUS</div>
+                    <div class="category-option" data-category="lain">LAIN</div>
+                </div>
+                <input type="hidden" id="selectedCategory">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Harga Dasar (HPP)</label>
+                <input type="number" class="form-input" id="newBasePrice" placeholder="Masukkan harga dasar">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Harga Jual</label>
+                <input type="number" class="form-input" id="newSellingPrice" placeholder="Masukkan harga jual">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Stok Awal</label>
+                <input type="number" class="form-input" id="newStock" placeholder="Masukkan jumlah stok awal" value="0">
+            </div>
+            
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeAddProductModal()">Batal</button>
+                <button class="btn btn-primary" onclick="addNewProduct()">Tambah Produk</button>
+            </div>
+        </div>
+    </div>
 
     <script>
-        // Data produk
-        const products = {
-            'Nama Produk A': { basePrice: 20000, sellingPrice: 25000, elementId: 'productA' },
-            'Nama Produk B': { basePrice: 28000, sellingPrice: 32500, elementId: 'productB' },
-            'Nama Produk C': { basePrice: 15000, sellingPrice: 18000, elementId: 'productC' },
-            'Nama Produk D': { basePrice: 35000, sellingPrice: 42500, elementId: 'productD' }
+        // Data produk berdasarkan kategori
+        const productsByCategory = {
+            'tambah': [
+                { id: 1, name: 'Nama Produk A', basePrice: 20000, sellingPrice: 25000, stock: 0, category: 'tambah' },
+                { id: 2, name: 'Nama Produk B', basePrice: 28000, sellingPrice: 32500, stock: 5, category: 'tambah' }
+            ],
+            'narita': [
+                { id: 3, name: 'Naritalin A', basePrice: 15000, sellingPrice: 22000, stock: 12, category: 'narita' },
+                { id: 4, name: 'Narita Super', basePrice: 30000, sellingPrice: 45000, stock: 7, category: 'narita' },
+                { id: 5, name: 'Narita Plus', basePrice: 25000, sellingPrice: 38000, stock: 3, category: 'narita' }
+            ],
+            'vr': [
+                { id: 6, name: 'VR Glasses Pro', basePrice: 120000, sellingPrice: 185000, stock: 4, category: 'vr' },
+                { id: 7, name: 'VR Controller', basePrice: 75000, sellingPrice: 120000, stock: 9, category: 'vr' }
+            ],
+            'kudus': [
+                { id: 8, name: 'Kudus Batik', basePrice: 85000, sellingPrice: 125000, stock: 15, category: 'kudus' },
+                { id: 9, name: 'Kudus Keris', basePrice: 150000, sellingPrice: 225000, stock: 2, category: 'kudus' }
+            ],
+            'lain': [
+                { id: 10, name: 'Produk Lain 1', basePrice: 10000, sellingPrice: 15000, stock: 20, category: 'lain' },
+                { id: 11, name: 'Produk Lain 2', basePrice: 50000, sellingPrice: 75000, stock: 6, category: 'lain' },
+                { id: 12, name: 'Nama Produk C', basePrice: 8000, sellingPrice: 12000, stock: 12, category: 'lain' }
+            ]
         };
         
-        // Variabel untuk melacak produk yang sedang diedit
+        // Variabel global
+        let currentCategory = 'tambah';
         let currentProduct = null;
+        let nextProductId = 13;
         
-        // Fungsi untuk membuka modal edit harga
-        function openPriceModal(productName, currentPrice) {
-            currentProduct = productName;
-            const product = products[productName];
-            
-            // Isi data modal
-            document.getElementById('modalProductName').value = productName;
-            document.getElementById('modalBasePrice').value = product.basePrice;
-            document.getElementById('modalSellingPrice').value = product.sellingPrice;
-            
-            // Tampilkan modal
-            document.getElementById('priceModal').style.display = 'flex';
-        }
-        
-        // Fungsi untuk menutup modal
-        function closePriceModal() {
-            document.getElementById('priceModal').style.display = 'none';
-            currentProduct = null;
-        }
-        
-        // Fungsi untuk memperbarui harga produk
-        function updateProductPrice() {
-            const basePrice = document.getElementById('modalBasePrice').value;
-            const sellingPrice = document.getElementById('modalSellingPrice').value;
-            
-            if (!basePrice || !sellingPrice) {
-                alert('Harap isi kedua harga!');
-                return;
-            }
-            
-            if (parseInt(sellingPrice) < parseInt(basePrice)) {
-                alert('Harga jual tidak boleh lebih rendah dari harga dasar!');
-                return;
-            }
-            
-            // Update data produk
-            products[currentProduct].basePrice = parseInt(basePrice);
-            products[currentProduct].sellingPrice = parseInt(sellingPrice);
-            
-            // Update tampilan harga
-            const priceElement = document.querySelector(`[onclick*="${currentProduct}"] .current-price`);
-            if (priceElement) {
-                priceElement.textContent = parseInt(sellingPrice).toLocaleString('id-ID');
-            }
-            
-            // Tampilkan konfirmasi
-            alert(`Harga ${currentProduct} berhasil diperbarui!\nHarga Dasar: Rp ${parseInt(basePrice).toLocaleString('id-ID')}\nHarga Jual: Rp ${parseInt(sellingPrice).toLocaleString('id-ID')}`);
-            
-            // Tutup modal
-            closePriceModal();
-        }
-        
-        // Fungsi untuk mengupdate stok produk
-        function updateStock(productId, change) {
-            const stockElement = document.getElementById(`stock${productId.charAt(0).toUpperCase() + productId.slice(1)}`);
-            let currentStock = parseInt(stockElement.textContent);
-            
-            // Jangan biarkan stok negatif
-            if (currentStock + change < 0) return;
-            
-            // Update stok
-            currentStock += change;
-            stockElement.textContent = currentStock;
-            
-            // Update warna stok jika perlu
-            if (currentStock === 0) {
-                stockElement.style.color = '#d32f2f';
-            } else if (currentStock < 5) {
-                stockElement.style.color = '#ff9800';
-            } else {
-                stockElement.style.color = '#333';
-            }
-        }
-        
-        // Tutup modal jika klik di luar area modal
-        document.getElementById('priceModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closePriceModal();
-            }
+        // Inisialisasi aplikasi
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProductsForCategory('tambah');
+            setupEventListeners();
         });
         
-        // Event listener untuk kategori
-        document.querySelectorAll('.category').forEach(category => {
-            category.addEventListener('click', function() {
-                // Hapus kelas aktif dari semua kategori
-                document.querySelectorAll('.category').forEach(cat => {
-                    cat.classList.remove('active');
+        // Setup event listeners
+        function setupEventListeners() {
+            // Kategori klik
+            document.querySelectorAll('.category').forEach(category => {
+                category.addEventListener('click', function() {
+                    const categoryName = this.getAttribute('data-category');
+                    switchCategory(categoryName);
                 });
-                
-                // Tambah kelas aktif ke kategori yang diklik
-                this.classList.add('active');
-                
-                // Simulasi filter produk berdasarkan kategori
-                const categoryName = this.querySelector('.category-name').textContent;
-                alert(`Menampilkan produk dari kategori: ${categoryName}`);
             });
-        });
-        
-        // Event listener untuk pencarian
-        document.querySelector('.search-input').addEventListener('input', function(e) {
-            const searchTerm = e.target.value.toLowerCase();
-            const productItems = document.querySelectorAll('.product-item');
             
-            productItems.forEach(item => {
-                const productName = item.querySelector('.product-name').t
+            // Tombol tambah produk
+            document.getElementById('addProductBtn').addEventListener('click', openAddProductModal);
+            
+            // Pencarian
+            document.getElementById('searchInput').addEventListener('input', function(e) {
+                filterProducts(e.target.value);
+            });
+            
+            
