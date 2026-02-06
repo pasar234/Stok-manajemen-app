@@ -136,7 +136,7 @@ body {
     border: none;
     padding: 12px 8px;
     color: var(--text-light);
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 600;
     cursor: pointer;
     display: flex;
@@ -397,13 +397,13 @@ body {
 .product-code {
     font-size: 12px;
     color: var(--text-light);
-    margin-bottom: 8px;
+    margin-bottom: 4px;
 }
 
 .product-price {
-    font-size: 28px;
-    font-weight: 800;
-    color: var(--text);
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--primary);
     margin: 8px 0;
 }
 
@@ -429,7 +429,7 @@ body {
 }
 
 .stock-value {
-    font-size: 20px;
+    font-size: 24px;
     font-weight: 700;
     color: var(--text);
     margin: 4px 0;
@@ -459,7 +459,9 @@ body {
 }
 
 .stock-btn:hover {
-    background-color: rgba(0, 0, 0, 0.05);
+    background-color: rgba(37, 99, 235, 0.1);
+    border-color: var(--primary);
+    color: var(--primary);
 }
 
 .delete-btn {
@@ -473,11 +475,13 @@ body {
     align-items: center;
     gap: 4px;
     margin-top: 12px;
-    padding: 0;
+    padding: 6px 12px;
+    border-radius: 4px;
+    transition: all 0.2s;
 }
 
 .delete-btn:hover {
-    text-decoration: underline;
+    background-color: rgba(239, 68, 68, 0.1);
 }
 
 /* Empty State */
@@ -485,6 +489,7 @@ body {
     text-align: center;
     padding: 40px 20px;
     color: var(--text-light);
+    display: none;
 }
 
 .empty-state i {
@@ -541,6 +546,7 @@ body {
     transition: transform 0.3s, opacity 0.3s;
     min-width: 250px;
     text-align: center;
+    font-weight: 500;
 }
 
 .toast.show {
@@ -594,6 +600,17 @@ body {
     to { opacity: 1; transform: scale(1); }
 }
 
+.modal-content h2 {
+    font-size: 20px;
+    margin-bottom: 16px;
+    color: var(--text);
+}
+
+.modal-content p {
+    margin-bottom: 24px;
+    color: var(--text-light);
+}
+
 .modal-actions {
     display: flex;
     gap: 12px;
@@ -629,6 +646,12 @@ body {
     .stock-control {
         align-self: flex-start;
     }
+    
+    .nav-btn {
+        font-size: 12px;
+        min-width: 60px;
+        padding: 10px 4px;
+    }
 }
 
 @media (min-width: 768px) {
@@ -642,7 +665,7 @@ body {
 
 /* Print Styles */
 @media print {
-    .main-nav, .app-actions, .delete-btn, .stock-buttons {
+    .main-nav, .app-actions, .delete-btn, .stock-buttons, .toast {
         display: none !important;
     }
     
@@ -656,4 +679,8 @@ body {
         box-shadow: none;
         border: 1px solid #ddd;
     }
-  }
+    
+    .product-card {
+        border: 1px solid #000;
+    }
+    }
