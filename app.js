@@ -79,6 +79,14 @@ function initializeEventListeners() {
     // Modal
     confirmCancel.addEventListener('click', () => confirmModal.classList.remove('show'));
     confirmOk.addEventListener('click', handleConfirm);
+    
+    // Enter key to save product
+    document.getElementById('nama').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') simpanData();
+    });
+    document.getElementById('jual').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') simpanData();
+    });
 }
 
 // Show Page
@@ -95,10 +103,13 @@ function showPage(page) {
     if (page === 'home') {
         pageHome.classList.add('active');
         pageList.classList.remove('active');
+        // Focus on nama input
+        document.getElementById('nama').focus();
     } else {
         currentCategory = page;
         pageHome.classList.remove('active');
         pageList.classList.add('active');
+        document.title = `Stok ${page.toUpperCase()} - Stok Pintar`;
         renderData();
     }
 }
@@ -113,6 +124,7 @@ function simpanData() {
     
     if (!nama || !jual) {
         showToast('Nama dan Harga Jual wajib diisi!', 'error');
+        document.getElementById('nama').focus();
         return;
     }
     
@@ -130,7 +142,7 @@ function simpanData() {
     database.push(produkBaru);
     saveToLocalStorage();
     
-    showToast(`Produk berhasil ditambahkan ke ${kategori}`, 'success');
+    showToast(`Produk "${nama}" berhasil ditambahkan ke ${kategori.toUpperCase()}`, 'success');
     
     // Clear form
     document.getElementById('nama').value = '';
@@ -159,15 +171,19 @@ function renderData() {
     
     emptyState.style.display = 'none';
     
+    // Sort by name
+    filteredData.sort((a, b) => a.nama.localeCompare(b.nama));
+    
     listContainer.innerHTML = filteredData.map(item => `
         <div class="product-card" data-id="${item.id}">
             <div class="product-header">
                 <div style="flex: 1;">
                     <h3 class="product-title">${escapeHtml(item.nama)}</h3>
-                    <div class="product-code">ID: ${escapeHtml(item.kode)} | Beli: ${formatRupiah(item.beli)}</div>
-                    <div class="product-price">${formatRupiah(item.jual)}</div>
+                    <div class="product-code">Kode: ${escapeHtml(item.kode)}</div>
+                    <div class="product-code">Beli: ${formatRupiah(item.beli)}</div>
+                    <div class="product-price">Jual: ${formatRupiah(item.jual)}</div>
                     <button class="delete-btn" onclick="showDeleteConfirm(${item.id})">
-                        <i class="fas fa-trash"></i> HAPUS PRODUK
+                        <i class="fas fa-trash"></i> Hapus Produk
                     </button>
                 </div>
                 <div class="stock-control">
@@ -355,6 +371,12 @@ document.addEventListener('keydown', (e) => {
         e.preventDefault();
         searchInput.focus();
     }
+    
+    // Ctrl+B to backup
+    if (e.ctrlKey && e.key === 'b' && pageHome.classList.contains('active')) {
+        e.preventDefault();
+        exportData();
+    }
 });
 
 // Offline Detection
@@ -363,5 +385,5 @@ window.addEventListener('online', () => {
 });
 
 window.addEventListener('offline', () => {
-    showToast('Anda sedang offline. Beberapa fitur mungkin terbatas.', 'warning');
+    showToast('Anda sedang offline. Data disimpan secara lokal.', 'warning');
 });
