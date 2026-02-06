@@ -123,6 +123,7 @@ body {
     overflow-x: auto;
     padding: 8px 4px;
     scrollbar-width: none;
+    -ms-overflow-style: none;
 }
 
 .nav-container::-webkit-scrollbar {
@@ -298,6 +299,7 @@ body {
 
 .btn-primary:hover {
     background-color: var(--primary-dark);
+    transform: translateY(-2px);
 }
 
 .btn-secondary {
@@ -307,6 +309,7 @@ body {
 
 .btn-secondary:hover {
     opacity: 0.9;
+    transform: translateY(-2px);
 }
 
 .btn-warning {
@@ -335,6 +338,7 @@ body {
 
 .btn-outline:hover {
     background-color: rgba(0, 0, 0, 0.05);
+    border-color: var(--primary);
 }
 
 /* Search Styles */
@@ -364,6 +368,7 @@ body {
 .search-input:focus {
     outline: none;
     border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 /* Product List Styles */
@@ -387,68 +392,80 @@ body {
     margin-bottom: 12px;
 }
 
+.product-info {
+    flex: 1;
+}
+
 .product-title {
     font-size: 18px;
     font-weight: 600;
     color: var(--text);
-    margin-bottom: 4px;
+    margin-bottom: 6px;
+    line-height: 1.4;
 }
 
 .product-code {
-    font-size: 12px;
+    font-size: 13px;
     color: var(--text-light);
-    margin-bottom: 4px;
+    margin-bottom: 8px;
+    background: rgba(0, 0, 0, 0.03);
+    padding: 4px 8px;
+    border-radius: 4px;
+    display: inline-block;
 }
 
-.product-price {
-    font-size: 24px;
-    font-weight: 700;
-    color: var(--primary);
-    margin: 8px 0;
-}
-
-.product-price small {
+.product-harga {
     font-size: 14px;
+    color: var(--text);
+    margin-bottom: 12px;
+    line-height: 1.5;
+}
+
+.harga-label {
     color: var(--text-light);
-    font-weight: normal;
+    font-weight: 500;
 }
 
 .stock-control {
     border: 2px solid var(--border);
     border-radius: var(--radius-sm);
-    padding: 8px;
+    padding: 10px;
     text-align: center;
     min-width: 100px;
     background-color: var(--card-bg);
+    margin-left: 12px;
 }
 
 .stock-label {
     font-size: 12px;
     color: var(--text-light);
-    margin-bottom: 4px;
+    margin-bottom: 6px;
+    font-weight: 600;
+    text-transform: uppercase;
 }
 
 .stock-value {
-    font-size: 24px;
-    font-weight: 700;
+    font-size: 28px;
+    font-weight: 800;
     color: var(--text);
-    margin: 4px 0;
+    margin: 8px 0;
+    font-family: monospace;
 }
 
 .stock-buttons {
     display: flex;
     justify-content: center;
-    gap: 8px;
-    margin-top: 8px;
+    gap: 10px;
+    margin-top: 10px;
 }
 
 .stock-btn {
-    width: 36px;
-    height: 36px;
-    border: 1px solid var(--border);
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--border);
     background-color: var(--card-bg);
-    border-radius: 6px;
-    font-size: 18px;
+    border-radius: 8px;
+    font-size: 20px;
     font-weight: 700;
     color: var(--text);
     cursor: pointer;
@@ -459,54 +476,57 @@ body {
 }
 
 .stock-btn:hover {
-    background-color: rgba(37, 99, 235, 0.1);
+    background-color: var(--primary);
     border-color: var(--primary);
-    color: var(--primary);
+    color: white;
+    transform: scale(1.1);
 }
 
 .delete-btn {
-    background: none;
-    border: none;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
     color: var(--danger);
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 600;
     cursor: pointer;
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
     margin-top: 12px;
-    padding: 6px 12px;
-    border-radius: 4px;
+    padding: 8px 14px;
+    border-radius: 6px;
     transition: all 0.2s;
 }
 
 .delete-btn:hover {
-    background-color: rgba(239, 68, 68, 0.1);
+    background: rgba(239, 68, 68, 0.2);
+    transform: translateY(-1px);
 }
 
 /* Empty State */
 .empty-state {
     text-align: center;
-    padding: 40px 20px;
+    padding: 50px 20px;
     color: var(--text-light);
     display: none;
 }
 
 .empty-state i {
-    font-size: 48px;
-    margin-bottom: 16px;
-    opacity: 0.5;
+    font-size: 60px;
+    margin-bottom: 20px;
+    opacity: 0.3;
 }
 
 .empty-state h3 {
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 600;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
     color: var(--text);
 }
 
 .empty-state p {
-    font-size: 14px;
+    font-size: 15px;
+    opacity: 0.8;
 }
 
 /* File Upload */
@@ -520,14 +540,15 @@ body {
 
 /* Info Text */
 .info-text {
-    font-size: 12px;
+    font-size: 13px;
     color: var(--text-light);
     text-align: center;
     margin-top: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: 8px;
+    line-height: 1.5;
 }
 
 /* Toast Notification */
@@ -538,15 +559,18 @@ body {
     transform: translateX(-50%) translateY(100px);
     background-color: var(--card-bg);
     color: var(--text);
-    padding: 14px 20px;
+    padding: 16px 24px;
     border-radius: var(--radius-sm);
-    box-shadow: 0 4px 12px var(--shadow);
+    box-shadow: 0 6px 20px var(--shadow);
     z-index: 1000;
     opacity: 0;
     transition: transform 0.3s, opacity 0.3s;
-    min-width: 250px;
+    min-width: 280px;
+    max-width: 90%;
     text-align: center;
     font-weight: 500;
+    font-size: 15px;
+    border-top: 4px solid transparent;
 }
 
 .toast.show {
@@ -555,15 +579,15 @@ body {
 }
 
 .toast.success {
-    border-left: 4px solid var(--success);
+    border-top-color: var(--success);
 }
 
 .toast.error {
-    border-left: 4px solid var(--danger);
+    border-top-color: var(--danger);
 }
 
 .toast.warning {
-    border-left: 4px solid var(--warning);
+    border-top-color: var(--warning);
 }
 
 /* Modal */
@@ -573,42 +597,47 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.7);
     display: none;
     align-items: center;
     justify-content: center;
     z-index: 1000;
     padding: 20px;
+    backdrop-filter: blur(4px);
 }
 
 .modal.show {
     display: flex;
+    animation: fadeIn 0.2s ease;
 }
 
 .modal-content {
     background-color: var(--card-bg);
     border-radius: var(--radius);
-    padding: 24px;
+    padding: 28px;
     max-width: 400px;
     width: 100%;
-    box-shadow: 0 8px 24px var(--shadow);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
     animation: modalIn 0.3s ease;
 }
 
 @keyframes modalIn {
-    from { opacity: 0; transform: scale(0.9); }
-    to { opacity: 1; transform: scale(1); }
+    from { opacity: 0; transform: scale(0.9) translateY(20px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
 .modal-content h2 {
-    font-size: 20px;
+    font-size: 22px;
     margin-bottom: 16px;
     color: var(--text);
+    font-weight: 700;
 }
 
 .modal-content p {
-    margin-bottom: 24px;
+    margin-bottom: 28px;
     color: var(--text-light);
+    font-size: 16px;
+    line-height: 1.6;
 }
 
 .modal-actions {
@@ -645,12 +674,24 @@ body {
     
     .stock-control {
         align-self: flex-start;
+        margin-left: 0;
+        width: 100%;
     }
     
     .nav-btn {
-        font-size: 12px;
+        font-size: 13px;
         min-width: 60px;
         padding: 10px 4px;
+    }
+    
+    .toast {
+        min-width: 250px;
+        padding: 14px 20px;
+        font-size: 14px;
+    }
+    
+    .modal-content {
+        padding: 24px;
     }
 }
 
@@ -658,8 +699,9 @@ body {
     .app-container {
         max-width: 500px;
         margin: 0 auto;
-        box-shadow: 0 0 20px var(--shadow);
+        box-shadow: 0 0 30px var(--shadow);
         min-height: 100vh;
+        position: relative;
     }
 }
 
@@ -672,6 +714,7 @@ body {
     .app-container {
         max-width: 100%;
         box-shadow: none;
+        background: white;
     }
     
     .card {
@@ -682,5 +725,11 @@ body {
     
     .product-card {
         border: 1px solid #000;
+        margin-bottom: 10px;
+    }
+    
+    body {
+        background: white !important;
+        color: black !important;
     }
     }
