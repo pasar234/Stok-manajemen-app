@@ -1,178 +1,236 @@
 <!DOCTYPE html>
-<html lang="id" data-theme="light">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Aplikasi manajemen stok produk">
-    <title>Stok Pintar - Manajemen Stok</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Stok Pintar - Pro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="styles.css">
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#2563eb">
+    <style>
+        /* --- CSS STYLES --- */
+        :root {
+            --primary: #2563eb;
+            --background: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --danger: #ef4444;
+            --radius: 12px;
+        }
+
+        [data-theme="dark"] {
+            --background: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f1f5f9;
+            --border: #334155;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+        }
+
+        .app-container { max-width: 600px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
+        
+        /* Header & Search */
+        .header { background: var(--primary); color: white; padding: 20px; position: sticky; top: 0; z-index: 100; }
+        .search-box { background: white; border-radius: 8px; padding: 10px; display: flex; align-items: center; margin-top: 15px; }
+        .search-box input { border: none; outline: none; width: 100%; margin-left: 10px; font-size: 16px; }
+
+        /* Kategori Tabs */
+        .tabs { display: flex; overflow-x: auto; background: var(--card-bg); border-bottom: 1px solid var(--border); }
+        .tab { padding: 15px 20px; cursor: pointer; white-space: nowrap; color: var(--text-light); font-weight: 600; border-bottom: 3px solid transparent; }
+        .tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+        /* Kartu Produk - Layout Sejajar (Foto 2) */
+        .product-list { padding: 10px; }
+        .product-card { 
+            background: var(--card-bg); 
+            border-bottom: 1px solid var(--border); 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 15px;
+        }
+        .product-info { flex: 1; }
+        .product-name { font-weight: bold; font-size: 1.1rem; margin-bottom: 2px; }
+        .product-code { font-size: 0.8rem; color: var(--text-light); margin-bottom: 5px; }
+        
+        /* Harga Merah Klik-able */
+        .price-tag { 
+            color: var(--danger); 
+            font-weight: 800; 
+            font-size: 1.2rem; 
+            cursor: pointer; 
+            display: inline-block;
+        }
+        .price-tag:hover { text-decoration: underline; }
+
+        /* Kontrol Stok Sejajar */
+        .stock-control { 
+            display: flex; 
+            align-items: center; 
+            gap: 15px; 
+            background: #f1f5f9; 
+            padding: 8px 12px; 
+            border-radius: 20px;
+            margin-left: 10px;
+        }
+        [data-theme="dark"] .stock-control { background: #334155; }
+        .btn-qty { border: none; background: none; font-size: 1.5rem; color: var(--primary); cursor: pointer; font-weight: bold; }
+        .stock-val { font-weight: 800; min-width: 25px; text-align: center; font-size: 1.1rem; }
+
+        /* Modal Styles */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
+        .modal.show { display: flex; }
+        .modal-content { background: var(--card-bg); padding: 25px; border-radius: var(--radius); width: 100%; max-width: 400px; }
+        .modal-content input { width: 100%; padding: 12px; margin: 15px 0; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; }
+        .btn { padding: 10px 20px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-close { background: #e2e8f0; color: #64748b; margin-right: 10px; }
+
+        /* Toast */
+        #toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 10px 20px; border-radius: 20px; display: none; z-index: 2000; }
+    </style>
 </head>
 <body>
-    <div class="app-container">
-        <!-- Header -->
-        <header class="app-header">
-            <div class="header-content">
-                <h1>
-                    <i class="fas fa-boxes"></i>
-                    Stok Pintar
-                </h1>
-                <p class="app-subtitle">Manajemen Stok Produk</p>
-            </div>
-            <div class="app-actions">
-                <button class="btn-icon" id="themeToggle">
-                    <i class="fas fa-moon"></i>
-                </button>
-                <button class="btn-icon" id="installBtn" style="display: none;">
-                    <i class="fas fa-download"></i>
-                </button>
-            </div>
-        </header>
 
-        <!-- Navigation -->
-        <nav class="main-nav">
-            <div class="nav-container">
-                <button class="nav-btn active" data-page="home">
-                    <i class="fas fa-home"></i>
-                    Home
-                </button>
-                <button class="nav-btn" data-page="narita">
-                    NARITA
-                </button>
-                <button class="nav-btn" data-page="vr">
-                    VR
-                </button>
-                <button class="nav-btn" data-page="kudus">
-                    KUDUS
-                </button>
-                <button class="nav-btn" data-page="lain">
-                    LAIN
-                </button>
-            </div>
-        </nav>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Home Page -->
-            <div class="page active" id="page-home">
-                <div class="card">
-                    <div class="card-header">
-                        <h2><i class="fas fa-plus-circle"></i> Tambah Produk Baru</h2>
-                    </div>
-                    <div class="card-body">
-                        <div class="form-group">
-                            <label for="nama">Nama Produk *</label>
-                            <input type="text" id="nama" class="form-input" placeholder="Masukkan nama produk" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="kode">Kode Produk</label>
-                            <input type="text" id="kode" class="form-input" placeholder="Masukkan kode produk (opsional)">
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="beli">Harga Beli</label>
-                                <input type="number" id="beli" class="form-input" placeholder="Harga beli" min="0">
-                            </div>
-                            <div class="form-group">
-                                <label for="jual">Harga Jual *</label>
-                                <input type="number" id="jual" class="form-input" placeholder="Harga jual" min="0" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="kategori">Kategori</label>
-                            <select id="kategori" class="form-select">
-                                <option value="narita">NARITA</option>
-                                <option value="vr">VR</option>
-                                <option value="kudus">KUDUS</option>
-                                <option value="lain">LAIN</option>
-                            </select>
-                        </div>
-                        <button class="btn-primary btn-block" id="simpanProduk">
-                            <i class="fas fa-save"></i> Simpan Produk
-                        </button>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h2><i class="fas fa-history"></i> Backup & Restore</h2>
-                    </div>
-                    <div class="card-body">
-                        <button class="btn-secondary btn-block" id="backupBtn">
-                            <i class="fas fa-download"></i> Backup Data
-                        </button>
-                        <div class="file-upload-wrapper">
-                            <label for="fileInput" class="btn-outline btn-block">
-                                <i class="fas fa-upload"></i> Restore Data
-                            </label>
-                            <input type="file" id="fileInput" class="file-input" accept=".json">
-                        </div>
-                        <p class="info-text">
-                            <i class="fas fa-info-circle"></i>
-                            Backup data Anda secara berkala untuk mencegah kehilangan data
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- List Page -->
-            <div class="page" id="page-list">
-                <div class="card">
-                    <div class="card-header">
-                        <h2><i class="fas fa-search"></i> Cari Produk</h2>
-                    </div>
-                    <div class="card-body">
-                        <div class="search-container">
-                            <i class="fas fa-search search-icon"></i>
-                            <input type="text" id="cari" class="search-input" placeholder="Cari nama atau kode produk...">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Empty State -->
-                <div class="empty-state" id="emptyState">
-                    <i class="fas fa-box-open"></i>
-                    <h3>Belum ada produk</h3>
-                    <p>Tambahkan produk baru di halaman Home</p>
-                </div>
-
-                <!-- Products List -->
-                <div id="list-container"></div>
-            </div>
-        </main>
-    </div>
-
-    <!-- Confirmation Modal -->
-    <div class="modal" id="confirmModal">
-        <div class="modal-content">
-            <h2 id="confirmTitle">Konfirmasi</h2>
-            <p id="confirmMessage">Apakah Anda yakin?</p>
-            <div class="modal-actions">
-                <button class="btn-outline" id="confirmCancel">Batal</button>
-                <button class="btn-danger" id="confirmOk">Ya, Hapus</button>
-            </div>
+<div class="app-container">
+    <div class="header">
+        <h2 style="margin:0"><i class="fas fa-boxes"></i> Stok Pintar</h2>
+        <div class="search-box">
+            <i class="fas fa-search" style="color: #94a3b8"></i>
+            <input type="text" id="searchInput" placeholder="Cari nama atau kode produk..." oninput="renderData()">
         </div>
     </div>
 
-    <!-- Toast Notification -->
-    <div class="toast" id="toast"></div>
+    <div class="tabs" id="categoryTabs">
+        </div>
 
-    <script src="app.js"></script>
-    <script>
-        // Register service worker
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
-                navigator.serviceWorker.register('service-worker.js')
-                    .then(function(registration) {
-                        console.log('ServiceWorker registered dengan scope: ', registration.scope);
-                    })
-                    .catch(function(err) {
-                        console.log('ServiceWorker registration failed: ', err);
-                    });
-            });
+    <div class="product-list" id="productList">
+        </div>
+</div>
+
+<div id="priceModal" class="modal">
+    <div class="modal-content">
+        <h3 id="modalTitle">Edit Harga</h3>
+        <input type="number" id="inputHargaBaru" placeholder="Masukkan harga baru">
+        <div style="display: flex; justify-content: flex-end;">
+            <button class="btn btn-close" onclick="tutupModal()">Batal</button>
+            <button class="btn btn-primary" onclick="simpanHarga()">Simpan</button>
+        </div>
+    </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+    /* --- JAVASCRIPT LOGIC --- */
+    let database = JSON.parse(localStorage.getItem('stok_app_db')) || [
+        { id: 1, nama: "Produk Contoh A", kode: "BRG01", jual: 50000, stok: 10, kategori: "NARITA" },
+        { id: 2, nama: "Produk Contoh B", kode: "BRG02", jual: 75000, stok: 5, kategori: "VR" }
+    ];
+    
+    let currentCategory = "NARITA";
+    let editingId = null;
+    const categories = ["NARITA", "VR", "KUDUS", "LAIN"];
+
+    function init() {
+        renderTabs();
+        renderData();
+    }
+
+    function renderTabs() {
+        const tabContainer = document.getElementById('categoryTabs');
+        tabContainer.innerHTML = categories.map(cat => `
+            <div class="tab ${cat === currentCategory ? 'active' : ''}" onclick="setCategory('${cat}')">
+                ${cat}
+            </div>
+        `).join('');
+    }
+
+    function setCategory(cat) {
+        currentCategory = cat;
+        renderTabs();
+        renderData();
+    }
+
+    function renderData() {
+        const container = document.getElementById('productList');
+        const keyword = document.getElementById('searchInput').value.toLowerCase();
+        
+        const filtered = database.filter(item => 
+            item.kategori === currentCategory && 
+            (item.nama.toLowerCase().includes(keyword) || item.kode.toLowerCase().includes(keyword))
+        );
+
+        container.innerHTML = filtered.map(item => `
+            <div class="product-card">
+                <div class="product-info">
+                    <div class="product-name">${item.nama}</div>
+                    <div class="product-code">Kode: ${item.kode}</div>
+                    <div class="price-tag" onclick="bukaModal(${item.id}, ${item.jual}, '${item.nama}')">
+                        Rp ${item.jual.toLocaleString('id-ID')}
+                    </div>
+                </div>
+                <div class="stock-control">
+                    <button class="btn-qty" onclick="ubahStok(${item.id}, -1)">-</button>
+                    <span class="stock-val">${item.stok}</span>
+                    <button class="btn-qty" onclick="ubahStok(${item.id}, 1)">+</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function ubahStok(id, delta) {
+        const idx = database.findIndex(p => p.id === id);
+        if (idx !== -1) {
+            database[idx].stok = Math.max(0, database[idx].stok + delta);
+            simpanKeStorage();
+            renderData();
         }
-    </script>
+    }
+
+    function bukaModal(id, harga, nama) {
+        editingId = id;
+        document.getElementById('modalTitle').innerText = "Edit: " + nama;
+        document.getElementById('inputHargaBaru').value = harga;
+        document.getElementById('priceModal').classList.add('show');
+    }
+
+    function tutupModal() {
+        document.getElementById('priceModal').classList.remove('show');
+    }
+
+    function simpanHarga() {
+        const hargaBaru = parseInt(document.getElementById('inputHargaBaru').value);
+        const idx = database.findIndex(p => p.id === editingId);
+        if (idx !== -1 && !isNaN(hargaBaru)) {
+            database[idx].jual = hargaBaru;
+            simpanKeStorage();
+            renderData();
+            tutupModal();
+            showToast("Harga berhasil diubah!");
+        }
+    }
+
+    function simpanKeStorage() {
+        localStorage.setItem('stok_app_db', JSON.stringify(database));
+    }
+
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.innerText = msg;
+        t.style.display = 'block';
+        setTimeout(() => t.style.display = 'none', 2000);
+    }
+
+    // Jalankan aplikasi
+    init();
+</script>
+
 </body>
-  </html>
+</html>
